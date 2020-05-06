@@ -8,9 +8,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::{Context, Poll};
 use std::time::Duration;
 
-pub fn once<T>(delay: Duration, task: T) -> (CancelToken, ScheduledTask<T>)
+pub fn once<T, C>(delay: Duration, task: C) -> (CancelToken, ScheduledTask<T>)
 where
     T: Future<Output = ()>,
+    C: FnOnce() -> T,
 {
     let done = AtomicBool::new(false);
     let waker = CancelWaker::new(done);
@@ -19,7 +20,7 @@ where
         ScheduledTask {
             waker,
             delay: Delay::new(delay),
-            task: task,
+            task: task(),
         },
     )
 }
@@ -73,7 +74,7 @@ mod tests {
         let atomic = Arc::new(AtomicI32::new(0));
         let atomic_c = atomic.clone();
         smol::run(async {
-            let (_, task) = once(Duration::from_secs(1), async {
+            let (_, task) = once(Duration::from_secs(1), || async {
                 atomic_c.store(1, Ordering::Relaxed);
             });
             task.await;
@@ -87,7 +88,7 @@ mod tests {
         let atomic = Arc::new(AtomicI32::new(0));
         let atomic_c = atomic.clone();
         smol::run(async {
-            let (token, task) = once(Duration::from_secs(1), async move {
+            let (token, task) = once(Duration::from_secs(1), || async move {
                 atomic_c.store(1, Ordering::Relaxed);
             });
             let handle = Task::spawn(async move { task.await });
