@@ -3,6 +3,12 @@ name = "see-you-later"
 version = "0.1.0"
 authors = ["wolf4ood <maggiolo00@gmail.com>"]
 edition = "2018"
+license = "Apache-2.0"
+description= "Delay and schedule async task"
+repository = "https://github.com/wolf4ood/see-you-later"
+keywords = ["async", "delay","timeout","scheduled"]
+categories = ["asynchronous"]
+readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
