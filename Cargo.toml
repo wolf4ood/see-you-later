@@ -19,4 +19,5 @@ futures="0.3.4"
 
 [dev-dependencies]
 smol="0.1"
+wait-for-me="0.1"
 smol-potat = { version = "0.2" }
