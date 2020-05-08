@@ -94,6 +94,6 @@ mod tests {
             task.await
         });
 
-        assert!( atomic.load(Ordering::Relaxed) >= 2);
+        assert!(atomic.load(Ordering::Relaxed) >= 2);
     }
 }
