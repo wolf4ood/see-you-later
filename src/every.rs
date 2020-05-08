@@ -84,7 +84,7 @@ mod tests {
         smol::run(async move {
             let atomic_inner = atomic_c.clone();
             let (cancel, task) = every(Duration::from_secs(1), || async {
-                atomic_inner.store(1, Ordering::Relaxed);
+                atomic_inner.fetch_add(1, Ordering::Relaxed);
             });
             Task::spawn(async move {
                 Timer::after(Duration::from_secs(3)).await;
@@ -94,6 +94,6 @@ mod tests {
             task.await
         });
 
-        assert_eq!(1, atomic.load(Ordering::Relaxed));
+        assert!( atomic.load(Ordering::Relaxed) >= 2);
     }
 }
