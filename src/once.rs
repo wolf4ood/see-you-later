@@ -8,7 +8,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::{Context, Poll};
 use std::time::Duration;
 
-pub fn once<T, C>(delay: Duration, task: C) -> (CancelToken, ScheduledTask<T>)
+pub fn once<T, C>(delay: Duration, task: C) -> (CancelToken, DelayedTask<T>)
 where
     T: Future<Output = ()>,
     C: FnOnce() -> T,
@@ -17,7 +17,7 @@ where
     let waker = CancelWaker::new(done);
     (
         CancelToken::new(waker.clone()),
-        ScheduledTask {
+        DelayedTask {
             waker,
             delay: Delay::new(delay),
             task: task(),
@@ -26,7 +26,7 @@ where
 }
 
 pin_project! {
-    pub struct ScheduledTask<T: Future<Output = ()>> {
+    pub struct DelayedTask<T: Future<Output = ()>> {
         waker: CancelWaker,
         #[pin]
         delay: Delay,
@@ -35,7 +35,17 @@ pin_project! {
     }
 }
 
-impl<T: Future<Output = ()>> Future for ScheduledTask<T> {
+impl<T: Future<Output = ()>> DelayedTask<T> {
+    pub fn new(waker: CancelWaker, delay: Delay, task: T) -> DelayedTask<T> {
+        DelayedTask {
+            waker,
+            delay: delay,
+            task: task,
+        }
+    }
+}
+
+impl<T: Future<Output = ()>> Future for DelayedTask<T> {
     type Output = ();
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
         let this = self.project();
