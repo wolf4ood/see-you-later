@@ -50,16 +50,17 @@ impl<C: Fn() -> T, T: Future<Output = ()>> Future for ScheduledTask<C, T> {
                 if this.waker.0.done.load(Ordering::Relaxed) {
                     Poll::Ready(())
                 } else {
-                    match this.current.as_mut().poll(cx) {
-                        Poll::Pending => return Poll::Pending,
-                        Poll::Ready(_) => {
-                            let current = DelayedTask::new(
-                                this.waker.clone(),
-                                Delay::new(this.duration.clone()),
-                                (this.task)(),
-                            );
-                            this.current.set(current);
-                            Poll::Pending
+                    loop {
+                        match this.current.as_mut().poll(cx) {
+                            Poll::Pending => return Poll::Pending,
+                            Poll::Ready(_) => {
+                                let current = DelayedTask::new(
+                                    this.waker.clone(),
+                                    Delay::new(this.duration.clone()),
+                                    (this.task)(),
+                                );
+                                this.current.set(current);
+                            }
                         }
                     }
                 }
