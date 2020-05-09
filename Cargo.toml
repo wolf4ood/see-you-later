@@ -1,7 +1,7 @@
 [package]
 name = "see-you-later"
 version = "0.1.0"
-authors = ["wolf4ood <maggiolo00@gmail.com>"]
+authors = ["Enrico Risa <enrico.risa@gmail.com>"]
 edition = "2018"
 license = "Apache-2.0"
 description= "Delay and schedule async task"
