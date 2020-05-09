@@ -8,6 +8,10 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::{Context, Poll};
 use std::time::Duration;
 
+/// Schedule a onceshot task after the [`Duration`][std::time::Duration] parameter.
+
+/// Returns the scheduled task which needs to be awaited on and the cancel token.
+
 pub fn once<T, C>(delay: Duration, task: C) -> (CancelToken, DelayedTask<T>)
 where
     T: Future<Output = ()>,
@@ -26,6 +30,7 @@ where
 }
 
 pin_project! {
+    /// A Future that represent a delayed task
     pub struct DelayedTask<T: Future<Output = ()>> {
         waker: CancelWaker,
         #[pin]
@@ -36,7 +41,7 @@ pin_project! {
 }
 
 impl<T: Future<Output = ()>> DelayedTask<T> {
-    pub fn new(waker: CancelWaker, delay: Delay, task: T) -> DelayedTask<T> {
+    pub(crate) fn new(waker: CancelWaker, delay: Delay, task: T) -> DelayedTask<T> {
         DelayedTask {
             waker,
             delay: delay,
