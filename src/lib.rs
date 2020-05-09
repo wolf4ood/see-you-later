@@ -51,9 +51,6 @@
 //! ```
 //!
 
-
-
-
 #![deny(missing_docs)]
 
 mod cancel;

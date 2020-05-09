@@ -33,7 +33,6 @@ impl CancelToken {
 }
 
 impl CancelToken {
-
     /// Cancel the scheduled async task if running.
     pub async fn cancel(self) {
         self.waker.0.done.store(true, Ordering::Relaxed);

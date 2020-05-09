@@ -9,7 +9,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::{Context, Poll};
 use std::time::Duration;
 
-/// Schedule a periodic task every [`Duration`][std::time::Duration]. The first task is scheduled immediately 
+/// Schedule a periodic task every [`Duration`][std::time::Duration]. The first task is scheduled immediately
 /// and subsequently with the given delay from the termination of the last execution
 
 /// Returns the scheduled task which needs to be awaited on and the cancel token.
