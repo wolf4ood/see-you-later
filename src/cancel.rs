@@ -4,13 +4,13 @@ use std::sync::{
     Arc,
 };
 
-pub struct CancelWakerInner {
+pub(crate) struct CancelWakerInner {
     pub waker: AtomicWaker,
     pub done: AtomicBool,
 }
 
 #[derive(Clone)]
-pub struct CancelWaker(pub Arc<CancelWakerInner>);
+pub(crate) struct CancelWaker(pub Arc<CancelWakerInner>);
 
 impl CancelWaker {
     pub fn new(done: AtomicBool) -> CancelWaker {
@@ -25,7 +25,7 @@ pub struct CancelToken {
 }
 
 impl CancelToken {
-    pub fn new(waker: CancelWaker) -> CancelToken {
+    pub(crate) fn new(waker: CancelWaker) -> CancelToken {
         CancelToken { waker }
     }
 }
