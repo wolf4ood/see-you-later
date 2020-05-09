@@ -20,6 +20,8 @@ impl CancelWaker {
         }))
     }
 }
+
+/// A Cancel token which provide the ability to cancel a scheduled task.
 pub struct CancelToken {
     waker: CancelWaker,
 }
@@ -31,6 +33,8 @@ impl CancelToken {
 }
 
 impl CancelToken {
+
+    /// Cancel the scheduled async task if running.
     pub async fn cancel(&self) {
         self.waker.0.done.store(true, Ordering::Relaxed);
         self.waker.0.waker.wake();
